@@ -159,13 +159,9 @@ const mapStateToProps = (state) => ({
   gold: state.general.gold,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  earnGold: (gold) => {
-    dispatch(earnGold(gold));
-  },
-  spendGold: (gold) => {
-    dispatch(spendGold(gold));
-  },
-});
+const mapDispatchToProps = {
+  earnGold,
+  spendGold,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Playspace)

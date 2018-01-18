@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 
+import { earnGold, spendGold } from '../actions/general';
+
 class Tween {
   constructor(options) {
     this.options = {
@@ -36,7 +38,10 @@ class Tween {
 
 export class Playspace extends React.Component {
   static propTypes = {
-    debug: PropTypes.bool
+    debug: PropTypes.bool,
+    gold: PropTypes.number.isRequired,
+    earnGold: PropTypes.func.isRequired,
+    spendGold: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -44,7 +49,6 @@ export class Playspace extends React.Component {
   }
 
   state = {
-    gold: 0,
     warriors: 0,
     currentTask: "idling around"
   }
@@ -82,20 +86,16 @@ export class Playspace extends React.Component {
 
   adventure = () => {
     this.startTask("adventuring", () => {
-      this.setState({
-        gold: this.state.gold + 1
-      });
+      this.props.earnGold(1);
     });
   }
 
   hireWarrior = () => {
-    if (this.state.gold < 5) {
+    if (this.props.gold < 5) {
       return;
     }
 
-    this.setState({
-      gold: this.state.gold - 5
-    });
+    this.props.spendGold(5);
 
     this.startTask("hiring a warrior", () => {
       const newState = {
@@ -106,8 +106,8 @@ export class Playspace extends React.Component {
         newState.warriorProgress = 0;
         newState.warriorInterval = setInterval(() => {
           if (this.state.warriorProgress === 100) {
+            this.props.earnGold(this.state.warriors);
             this.setState({
-              gold: this.state.gold + this.state.warriors,
               warriorProgress: 0
             });
           } else {
@@ -124,9 +124,9 @@ export class Playspace extends React.Component {
 
   render() {
     return (
-      <div style={{padding: 10}}>
+      <div>
         <header>
-          <h4>Total Gold: {this.state.gold}</h4>
+          <h4>Total Gold: {this.props.gold}</h4>
           <h4>Current Task: {this.state.currentTask}</h4>
           <p><progress value={this.state.progress || 0} max="1" /></p>
         </header>
@@ -136,7 +136,7 @@ export class Playspace extends React.Component {
               go on an adventure (5s)
             </button>
           </p>
-          {this.state.gold >= 5 && 
+          {this.props.gold >= 5 &&
             <p>
               <button disabled={this.state.progress} onClick={this.hireWarrior}>
                 hire a warrior (5s, 5g)
@@ -155,10 +155,17 @@ export class Playspace extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  debug: state.general.debug
+  debug: state.general.debug,
+  gold: state.general.gold,
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  earnGold: (gold) => {
+    dispatch(earnGold(gold));
+  },
+  spendGold: (gold) => {
+    dispatch(spendGold(gold));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Playspace)

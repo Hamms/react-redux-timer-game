@@ -37,11 +37,20 @@ export default class Main extends React.Component {
     }
   }
 
+  resetStorage = () => {
+    sessionStorage.removeItem(this.constructor.STORAGE_KEY);
+  }
+
   render() {
     return (
-      <Provider store={this.state.store}>
-        <Playspace />
-      </Provider>
+      <div>
+        <Provider store={this.state.store}>
+          <Playspace />
+        </Provider>
+        {this.constructor.STORAGE_KEY &&
+          <button onClick={this.resetStorage}>reset</button>
+        }
+      </div>
     );
   }
 }

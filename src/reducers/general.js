@@ -4,7 +4,8 @@ export const EARN_GOLD = 'general/EARN_GOLD';
 
 const initialState = {
   debug: false,
-  gold: 0
+  gold: 0,
+  totalGold: 0,
 }
 
 export default function (state = initialState, action) {
@@ -24,7 +25,8 @@ export default function (state = initialState, action) {
     case EARN_GOLD:
       return {
         ...state,
-        gold: state.gold + action.gold
+        gold: state.gold + action.gold,
+        totalGold: state.totalGold + action.gold
       }
 
     default:

@@ -40,6 +40,7 @@ export class Playspace extends React.Component {
   static propTypes = {
     debug: PropTypes.bool,
     gold: PropTypes.number.isRequired,
+    totalGold: PropTypes.number.isRequired,
     earnGold: PropTypes.func.isRequired,
     spendGold: PropTypes.func.isRequired,
   }
@@ -136,7 +137,7 @@ export class Playspace extends React.Component {
               go on an adventure (5s)
             </button>
           </p>
-          {this.props.gold >= 5 &&
+          {this.props.totalGold >= 5 &&
             <p>
               <button disabled={this.state.progress} onClick={this.hireWarrior}>
                 hire a warrior (5s, 5g)
@@ -148,6 +149,7 @@ export class Playspace extends React.Component {
           }
         </main>
         <footer>
+          <h5>Total Lifetime Gold: {this.props.totalGold}</h5>
         </footer>
       </div>
     );
@@ -157,6 +159,7 @@ export class Playspace extends React.Component {
 const mapStateToProps = (state) => ({
   debug: state.general.debug,
   gold: state.general.gold,
+  totalGold: state.general.totalGold,
 });
 
 const mapDispatchToProps = {

@@ -45,6 +45,7 @@ export class Playspace extends React.Component {
     totalGold: PropTypes.number.isRequired,
     earnGold: PropTypes.func.isRequired,
     spendGold: PropTypes.func.isRequired,
+    hireWarrior: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -55,11 +56,26 @@ export class Playspace extends React.Component {
     currentTask: "idling around"
   }
 
+  componentWillMount() {
+    this.componentWillMountOrUpdate(this.props, this.state);
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    // currentTask will always default to 'idling around'
+    if (!nextState.currentTask) {
+      nextState.currentTask = "idling around";
+    }
+
+    this.componentWillMountOrUpdate(nextProps, nextState);
+  }
+
   /**
    * Custom method for those updates that should be done either on mount or on
    * update
    */
   componentWillMountOrUpdate(nextProps, nextState) {
+    // If we have warriors but not a warrior interval, initialize and save a
+    // warrior interval
     if (nextProps.warriors && !nextState.warriorInterval) {
       nextState.warriorProgress = 0;
       nextState.warriorInterval = setInterval(() => {
@@ -77,19 +93,8 @@ export class Playspace extends React.Component {
     }
   }
 
-  componentWillMount() {
-    this.componentWillMountOrUpdate(this.props, this.state);
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    if (!nextState.currentTask) {
-      nextState.currentTask = "idling around";
-    }
-
-    this.componentWillMountOrUpdate(nextProps, nextState);
-  }
-
   startTask = (name, onComplete) => {
+    // cannot start a new task if we're already working on one
     if (this.state.progress) {
       return;
     }
@@ -121,6 +126,7 @@ export class Playspace extends React.Component {
   }
 
   hireWarrior = () => {
+    // cannot hire a warrior unless we can afford to
     if (this.props.gold < 5) {
       return;
     }
@@ -146,6 +152,10 @@ export class Playspace extends React.Component {
               go on an adventure (5s)
             </button>
           </p>
+          {/*
+            once we have earned at least 5 lifetime gold, display the 'hire
+            warrior' button forever (even if our current gold drops below 5)
+          */}
           {this.props.totalGold >= 5 &&
             <p>
               <button disabled={this.state.progress} onClick={this.hireWarrior}>
@@ -153,8 +163,16 @@ export class Playspace extends React.Component {
               </button>
             </p>
           }
+          {/*
+            once we have warriors, display their progress
+          */}
           {this.props.warriors > 0 &&
-          <p>{this.props.warriors} Warriors: <progress value={this.state.warriorProgress || 0} max="100">your warrior is adventuring</progress></p>
+            <p>
+              {this.props.warriors} Warriors:{' '}
+              <progress value={this.state.warriorProgress || 0} max="100">
+                your warrior is adventuring
+              </progress>
+            </p>
           }
         </main>
         <footer>

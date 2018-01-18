@@ -55,10 +55,38 @@ export class Playspace extends React.Component {
     currentTask: "idling around"
   }
 
+  /**
+   * Custom method for those updates that should be done either on mount or on
+   * update
+   */
+  componentWillMountOrUpdate(nextProps, nextState) {
+    if (nextProps.warriors && !nextState.warriorInterval) {
+      nextState.warriorProgress = 0;
+      nextState.warriorInterval = setInterval(() => {
+        if (this.state.warriorProgress === 100) {
+          this.props.earnGold(this.props.warriors);
+          this.setState({
+            warriorProgress: 0
+          });
+        } else {
+          this.setState({
+            warriorProgress: this.state.warriorProgress + 10
+          });
+        }
+      }, 1000);
+    }
+  }
+
+  componentWillMount() {
+    this.componentWillMountOrUpdate(this.props, this.state);
+  }
+
   componentWillUpdate(nextProps, nextState) {
     if (!nextState.currentTask) {
       nextState.currentTask = "idling around";
     }
+
+    this.componentWillMountOrUpdate(nextProps, nextState);
   }
 
   startTask = (name, onComplete) => {
@@ -100,24 +128,6 @@ export class Playspace extends React.Component {
     this.props.spendGold(5);
 
     this.startTask("hiring a warrior", () => {
-      if (!this.props.warriors) {
-        this.setState({
-          warriorProgress: 0,
-          warriorInterval: setInterval(() => {
-            if (this.state.warriorProgress === 100) {
-              this.props.earnGold(this.props.warriors);
-              this.setState({
-                warriorProgress: 0
-              });
-            } else {
-              this.setState({
-                warriorProgress: this.state.warriorProgress + 10
-              });
-            }
-          }, 1000)
-        });
-      }
-
       this.props.hireWarrior();
     });
   }

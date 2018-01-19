@@ -90,6 +90,16 @@ export class Playspace extends React.Component {
     });
   }
 
+  renderTaskButton(onClick, content = null) {
+    return (
+      <p>
+        <button disabled={this.state.progress} onClick={onClick}>
+          {content}
+        </button>
+      </p>
+    );
+  }
+
   adventure = () => {
     this.startTask("adventuring", () => {
       this.props.earnGold(1);
@@ -118,21 +128,10 @@ export class Playspace extends React.Component {
           <p><progress value={this.state.progress || 0} max="1" /></p>
         </header>
         <main>
-          <p>
-            <button disabled={this.state.progress} onClick={this.adventure}>
-              go on an adventure (5s)
-            </button>
-          </p>
-          {/*
-            once we have earned at least 5 lifetime gold, display the 'hire
-            warrior' button forever (even if our current gold drops below 5)
-          */}
+          {this.renderTaskButton(this.adventure, "go on an adventure")}
+
           {this.props.totalGold >= 5 &&
-            <p>
-              <button disabled={this.state.progress} onClick={this.hireWarrior}>
-                hire a warrior (5s, 5g)
-              </button>
-            </p>
+              this.renderTaskButton(this.hireWarrior, "hire a warrior (5g)")
           }
           <WarriorForeverProgress />
         </main>

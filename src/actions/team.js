@@ -1,6 +1,9 @@
-import { HIRE_WARRIOR } from '../reducers/team';
+import { HIRE_WARRIOR, HIRE_MAGE } from '../reducers/team';
 
-/* eslint-disable import/prefer-default-export */
 export const hireWarrior = () => ({
   type: HIRE_WARRIOR
+});
+
+export const hireMage = () => ({
+  type: HIRE_MAGE
 });

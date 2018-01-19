@@ -24,6 +24,7 @@ describe('Playspace', () => {
       earnGold: jest.fn(),
       spendGold: jest.fn(),
       hireWarrior: jest.fn(),
+      hireMage: jest.fn(),
     };
     mountedPlayspace = undefined;
   });

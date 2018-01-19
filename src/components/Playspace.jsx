@@ -4,9 +4,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { earnGold, spendGold } from '../actions/general';
-import { hireWarrior } from '../actions/team';
+import { hireWarrior, hireMage } from '../actions/team';
 
 import WarriorForeverProgress from './WarriorForeverProgress';
+import MageForeverProgress from './MageForeverProgress';
 
 class Tween {
   constructor(options) {
@@ -47,6 +48,7 @@ export class Playspace extends React.Component {
     earnGold: PropTypes.func.isRequired,
     spendGold: PropTypes.func.isRequired,
     hireWarrior: PropTypes.func.isRequired,
+    hireMage: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -90,16 +92,6 @@ export class Playspace extends React.Component {
     });
   }
 
-  renderTaskButton(onClick, content = null) {
-    return (
-      <p>
-        <button disabled={this.state.progress} onClick={onClick}>
-          {content}
-        </button>
-      </p>
-    );
-  }
-
   adventure = () => {
     this.startTask("adventuring", () => {
       this.props.earnGold(1);
@@ -119,6 +111,29 @@ export class Playspace extends React.Component {
     });
   }
 
+  hireMage = () => {
+    // cannot hire a mage unless we can afford to
+    if (this.props.gold < 12) {
+      return;
+    }
+
+    this.props.spendGold(12);
+
+    this.startTask("hiring a mage", () => {
+      this.props.hireMage();
+    });
+  }
+
+  renderTaskButton(onClick, content = null) {
+    return (
+      <p>
+        <button disabled={this.state.progress} onClick={onClick}>
+          {content}
+        </button>
+      </p>
+    );
+  }
+
   render() {
     return (
       <div>
@@ -133,7 +148,15 @@ export class Playspace extends React.Component {
           {this.props.totalGold >= 5 &&
               this.renderTaskButton(this.hireWarrior, "hire a warrior (5g)")
           }
+
+          {this.props.totalGold >= 12 &&
+              this.renderTaskButton(this.hireMage, "hire a mage (12g)")
+          }
+
+          <hr />
+
           <WarriorForeverProgress />
+          <MageForeverProgress />
         </main>
         <footer>
           <h5>Total Lifetime Gold: {this.props.totalGold}</h5>
@@ -153,6 +176,7 @@ const mapDispatchToProps = {
   earnGold,
   spendGold,
   hireWarrior,
+  hireMage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Playspace)

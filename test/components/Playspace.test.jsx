@@ -1,6 +1,6 @@
 import React from "react";
 
-import { mount } from "enzyme";
+import { shallow } from "enzyme";
 
 import { Playspace } from "../../src/components/Playspace";
 
@@ -9,7 +9,7 @@ describe('Playspace', () => {
   let mountedPlayspace;
   const playspace = () => {
     if (!mountedPlayspace) {
-      mountedPlayspace = mount(<Playspace {...props} />);
+      mountedPlayspace = shallow(<Playspace {...props} />);
     }
 
     // overwrite startTask to instantly complete
@@ -20,7 +20,6 @@ describe('Playspace', () => {
   beforeEach(() => {
     props = {
       gold: 0,
-      warriors: 0,
       totalGold: 0,
       earnGold: jest.fn(),
       spendGold: jest.fn(),
@@ -75,18 +74,6 @@ describe('Playspace', () => {
       expect(props.spendGold).toHaveBeenCalledTimes(1);
       expect(props.spendGold).toHaveBeenCalledWith(5);
       expect(props.hireWarrior).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('Warrior progress', () => {
-    it('shows up once we have at least one warrior', () => {
-      expect(playspace().find('progress').length).toEqual(1);
-      expect(playspace().state().warriorInterval).toBeUndefined();
-      playspace().setProps({
-        warriors: 1
-      });
-      expect(playspace().find('progress').length).toEqual(2);
-      expect(playspace().state().warriorInterval).not.toBeUndefined();
     });
   });
 });

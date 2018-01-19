@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import { earnGold, spendGold } from '../actions/general';
 import { hireWarrior } from '../actions/team';
 
+import WarriorForeverProgress from './WarriorForeverProgress';
+
 class Tween {
   constructor(options) {
     this.options = {
@@ -41,7 +43,6 @@ export class Playspace extends React.Component {
   static propTypes = {
     debug: PropTypes.bool,
     gold: PropTypes.number.isRequired,
-    warriors: PropTypes.number.isRequired,
     totalGold: PropTypes.number.isRequired,
     earnGold: PropTypes.func.isRequired,
     spendGold: PropTypes.func.isRequired,
@@ -56,40 +57,10 @@ export class Playspace extends React.Component {
     currentTask: "idling around"
   }
 
-  componentWillMount() {
-    this.componentWillMountOrUpdate(this.props, this.state);
-  }
-
   componentWillUpdate(nextProps, nextState) {
     // currentTask will always default to 'idling around'
     if (!nextState.currentTask) {
       nextState.currentTask = "idling around";
-    }
-
-    this.componentWillMountOrUpdate(nextProps, nextState);
-  }
-
-  /**
-   * Custom method for those updates that should be done either on mount or on
-   * update
-   */
-  componentWillMountOrUpdate(nextProps, nextState) {
-    // If we have warriors but not a warrior interval, initialize and save a
-    // warrior interval
-    if (nextProps.warriors && !nextState.warriorInterval) {
-      nextState.warriorProgress = 0;
-      nextState.warriorInterval = setInterval(() => {
-        if (this.state.warriorProgress === 100) {
-          this.props.earnGold(this.props.warriors);
-          this.setState({
-            warriorProgress: 0
-          });
-        } else {
-          this.setState({
-            warriorProgress: this.state.warriorProgress + 10
-          });
-        }
-      }, 1000);
     }
   }
 
@@ -163,17 +134,7 @@ export class Playspace extends React.Component {
               </button>
             </p>
           }
-          {/*
-            once we have warriors, display their progress
-          */}
-          {this.props.warriors > 0 &&
-            <p>
-              {this.props.warriors} Warriors:{' '}
-              <progress value={this.state.warriorProgress || 0} max="100">
-                your warrior is adventuring
-              </progress>
-            </p>
-          }
+          <WarriorForeverProgress />
         </main>
         <footer>
           <h5>Total Lifetime Gold: {this.props.totalGold}</h5>
@@ -187,7 +148,6 @@ const mapStateToProps = (state) => ({
   debug: state.general.debug,
   gold: state.general.gold,
   totalGold: state.general.totalGold,
-  warriors: state.team.warriors,
 });
 
 const mapDispatchToProps = {

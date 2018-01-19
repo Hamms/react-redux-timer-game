@@ -1,0 +1,14 @@
+{
+  "classes": {
+    "mage": {
+      "costs": 12,
+      "earns": 5,
+      "every": 20
+    },
+    "warrior": {
+      "costs": 5,
+      "earns": 1,
+      "every": 10
+    }
+  }
+}

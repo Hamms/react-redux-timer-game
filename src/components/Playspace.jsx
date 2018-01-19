@@ -9,6 +9,8 @@ import { hireWarrior, hireMage } from '../actions/team';
 import WarriorForeverProgress from './WarriorForeverProgress';
 import MageForeverProgress from './MageForeverProgress';
 
+import config from '../config.json';
+
 class Tween {
   constructor(options) {
     this.options = {
@@ -100,11 +102,11 @@ export class Playspace extends React.Component {
 
   hireWarrior = () => {
     // cannot hire a warrior unless we can afford to
-    if (this.props.gold < 5) {
+    if (this.props.gold < config.classes.warrior.costs) {
       return;
     }
 
-    this.props.spendGold(5);
+    this.props.spendGold(config.classes.warrior.costs);
 
     this.startTask("hiring a warrior", () => {
       this.props.hireWarrior();
@@ -113,11 +115,11 @@ export class Playspace extends React.Component {
 
   hireMage = () => {
     // cannot hire a mage unless we can afford to
-    if (this.props.gold < 12) {
+    if (this.props.gold < config.classes.mage.costs) {
       return;
     }
 
-    this.props.spendGold(12);
+    this.props.spendGold(config.classes.mage.costs);
 
     this.startTask("hiring a mage", () => {
       this.props.hireMage();
@@ -145,12 +147,18 @@ export class Playspace extends React.Component {
         <main>
           {this.renderTaskButton(this.adventure, "go on an adventure")}
 
-          {this.props.totalGold >= 5 &&
-              this.renderTaskButton(this.hireWarrior, "hire a warrior (5g)")
+          {this.props.totalGold >= config.classes.warrior.costs &&
+            this.renderTaskButton(
+              this.hireWarrior,
+              `hire a warrior (${config.classes.warrior.costs}g)`,
+            )
           }
 
-          {this.props.totalGold >= 12 &&
-              this.renderTaskButton(this.hireMage, "hire a mage (12g)")
+          {this.props.totalGold >= config.classes.mage.costs &&
+            this.renderTaskButton(
+              this.hireMage,
+              `hire a mage (${config.classes.mage.costs}g)`,
+            )
           }
 
           <hr />

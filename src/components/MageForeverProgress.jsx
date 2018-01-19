@@ -6,6 +6,9 @@ import { connect } from 'react-redux';
 import { earnGold } from '../actions/general';
 
 import ForeverProgress from './ForeverProgress';
+import config from '../config.json';
+
+const MAGE = config.classes.mage;
 
 export class MageForeverProgress extends React.Component {
   static propTypes = {
@@ -18,7 +21,7 @@ export class MageForeverProgress extends React.Component {
   }
 
   handleComplete = () => {
-    this.props.earnGold(this.props.mages * 5);
+    this.props.earnGold(this.props.mages * MAGE.earns);
   }
 
   render() {
@@ -30,7 +33,7 @@ export class MageForeverProgress extends React.Component {
       <ForeverProgress
         title={`${this.props.mages} Mages`}
         onComplete={this.handleComplete}
-        delay={2000}
+        delay={MAGE.every * 100}
       />
     )
   }

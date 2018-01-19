@@ -6,6 +6,9 @@ import { connect } from 'react-redux';
 import { earnGold } from '../actions/general';
 
 import ForeverProgress from './ForeverProgress';
+import config from '../config.json';
+
+const WARRIOR = config.classes.warrior;
 
 export class WarriorForeverProgress extends React.Component {
   static propTypes = {
@@ -18,7 +21,7 @@ export class WarriorForeverProgress extends React.Component {
   }
 
   handleComplete = () => {
-    this.props.earnGold(this.props.warriors);
+    this.props.earnGold(this.props.warriors * WARRIOR.earns);
   }
 
   render() {
@@ -30,6 +33,7 @@ export class WarriorForeverProgress extends React.Component {
       <ForeverProgress
         title={`${this.props.warriors} Warriors`}
         onComplete={this.handleComplete}
+        delay={WARRIOR.every * 100}
       />
     )
   }
